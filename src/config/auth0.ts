@@ -1,0 +1,70 @@
+import * as auth0 from 'auth0-js';
+// import Cookie from 'universal-cookie';
+
+import configs from './auth_config';
+import * as http from './http';
+
+import { ApiRoot } from './api';
+
+const config = configs();
+
+const webAuth = new auth0.WebAuth({
+  clientID: config.clientID,
+  domain: config.domain,
+  responseType: 'token id_token',
+  redirectUri: `${window.location.origin}/login/callback`,
+  scope: 'openid profile email'
+});
+
+export const login = () => {
+  webAuth.authorize();
+};
+
+export const handleAuthentication = (hash: any, history: any) => {
+  webAuth.parseHash({ hash: hash }, function(err: any, authResult: any) {
+    if (err) {
+      return console.log(err);
+    }
+
+    setSession(authResult, (loc: any) => {
+      history.push(loc);
+    });
+  });
+};
+
+const setSession = async (authResult: any, redirect: any) => {
+  // Set the time that the access token will expire at
+  const expiresAt = JSON.stringify(
+    authResult.expiresIn * 1000 + new Date().getTime()
+  );
+  localStorage.setItem('access_token', authResult.accessToken);
+  localStorage.setItem('id_token', authResult.idToken);
+  localStorage.setItem('expires_at', expiresAt);
+  const body = new FormData();
+  body.append('access_token', authResult.accessToken);
+  const res = await http.post(ApiRoot + 'auth/v1/signin', body);
+  if (res.Error) {
+    alert('Login failed');
+    redirect('/login');
+  }
+  redirect('/');
+};
+
+export const handleLogout = (history: any) => {
+  fetch(`${ApiRoot}/auth/v1/signout`, {
+    mode: 'cors'
+  })
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      if (data.Success) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('id_token');
+        localStorage.removeItem('expires_at');
+        history.push('/');
+      } else {
+        window.alert('Logout failed, check your network and try again');
+      }
+    });
+};

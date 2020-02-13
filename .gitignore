@@ -30,3 +30,6 @@ yarn-error.log*
 !.vscode/extensions.json
 
 ### VisualStudioCode Patch ###
+
+## jetbrains ides ##
+.idea

@@ -2,9 +2,7 @@ import * as auth0 from 'auth0-js';
 // import Cookie from 'universal-cookie';
 
 import configs from './auth_config';
-import * as http from './http';
-
-import { ApiRoot } from './api';
+import http from './http';
 
 const config = configs();
 
@@ -33,38 +31,22 @@ export const handleAuthentication = (hash: any, history: any) => {
 };
 
 const setSession = async (authResult: any, redirect: any) => {
-  // Set the time that the access token will expire at
-  const expiresAt = JSON.stringify(
-    authResult.expiresIn * 1000 + new Date().getTime()
-  );
-  localStorage.setItem('access_token', authResult.accessToken);
-  localStorage.setItem('id_token', authResult.idToken);
-  localStorage.setItem('expires_at', expiresAt);
-  const body = new FormData();
-  body.append('access_token', authResult.accessToken);
-  const res = await http.post(ApiRoot + 'auth/v1/signin', body);
-  if (res.Error) {
-    alert('Login failed');
-    redirect('/login');
-  }
-  redirect('/');
+  console.log(authResult.accessToken);
+  http.post('/auth/login', { auth_token: authResult.accessToken }).then(res => {
+    localStorage.setItem('jwt_token', res.token);
+    redirect('/');
+  });
 };
 
 export const handleLogout = (history: any) => {
-  fetch(`${ApiRoot}/auth/v1/signout`, {
-    mode: 'cors'
-  })
-    .then(res => {
-      return res.json();
-    })
-    .then(data => {
-      if (data.Success) {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('id_token');
-        localStorage.removeItem('expires_at');
-        history.push('/');
-      } else {
-        window.alert('Logout failed, check your network and try again');
-      }
-    });
+  webAuth.logout({
+    returnTo: window.location.origin
+  });
+};
+
+export const isLoggedIn = () => {
+  if (localStorage.getItem('jwt_token')) {
+    return true;
+  }
+  return false;
 };

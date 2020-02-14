@@ -1,19 +1,18 @@
 import React from 'react';
 import { Route } from 'react-router-dom';
+import './Login.scss';
+
 import { login } from '../../config/auth0';
 import Callback from './Callback';
 
 const LoginButton = () => (
-  <div>
-    <h1>Login</h1>
-    <button onClick={login}>Login</button>
-  </div>
+    <button onClick={login} className="btn btn-lg btn-primary">Login</button>
 );
 
 const Login = (props: any) => {
   const { match } = props;
   return (
-    <div className="login">
+    <div className="loginPage">
       <Route exact path={`${match.url}/`} component={LoginButton} />
       <Route path={`${match.url}/callback/`} component={Callback} />
     </div>

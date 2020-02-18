@@ -18,13 +18,13 @@ export const login = () => {
   webAuth.authorize();
 };
 
-export const handleAuthentication = (hash: any, history: any) => {
+export const handleAuthentication = async (hash: any, history: any) => {
   webAuth.parseHash({ hash: hash }, function(err: any, authResult: any) {
     if (err) {
       return console.log(err);
     }
 
-    setSession(authResult, (loc: any) => {
+    return setSession(authResult, (loc: any) => {
       history.push(loc);
     });
   });
@@ -34,7 +34,7 @@ const setSession = async (authResult: any, redirect: any) => {
   console.log(authResult.accessToken);
   http.post('/auth/login', { auth_token: authResult.accessToken }).then(res => {
     localStorage.setItem('jwt_token', res.token);
-    redirect('/');
+    return { msg: 'success' };
   });
 };
 

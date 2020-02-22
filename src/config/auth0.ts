@@ -18,24 +18,27 @@ export const login = () => {
   webAuth.authorize();
 };
 
-export const handleAuthentication = async (hash: any, history: any) => {
-  webAuth.parseHash({ hash: hash }, function(err: any, authResult: any) {
+export const handleAuthentication = (hash: any, history: any) => {
+  return webAuth.parseHash({ hash: hash }, async function(
+    err: any,
+    authResult: any
+  ) {
     if (err) {
-      return console.log(err);
+      console.log(err);
     }
 
-    return setSession(authResult, (loc: any) => {
-      history.push(loc);
-    });
+    setSession(authResult, history);
   });
 };
 
-const setSession = async (authResult: any, redirect: any) => {
+const setSession = (authResult: any, history: any) => {
   console.log(authResult.accessToken);
-  http.post('/auth/login', { auth_token: authResult.accessToken }).then(res => {
-    localStorage.setItem('jwt_token', res.token);
-    return { msg: 'success' };
-  });
+  return http
+    .post('/auth/login', { auth_token: authResult.accessToken })
+    .then(res => {
+      localStorage.setItem('jwt_token', res.token);
+      window.location.href = '/';
+    });
 };
 
 export const handleLogout = (history: any) => {

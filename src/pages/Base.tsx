@@ -7,7 +7,7 @@ import Navbar from '../components/common/Navbar/Navbar';
 import Home from './Home/Home';
 import Logout from './Logout/Logout';
 import Authorize from './Authorize/Authorize';
-import Callback from './Login/Callback';
+import PrivateRoute from '../components/common/PrivateRoute/PrivateRoute';
 
 const Base = () => (
   <div className="App">
@@ -17,11 +17,13 @@ const Base = () => (
         <Navbar />
         <div className="content">
           <div className="container-fluid">
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <Route path="/logout" component={Logout} />
-              <Route path="/authorize" component={Authorize} />
-            </Switch>
+            <PrivateRoute>
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <Route path="/logout" component={Logout} />
+                <Route path="/authorize" component={Authorize} />
+              </Switch>
+            </PrivateRoute>
           </div>
         </div>
       </div>

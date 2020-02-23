@@ -1,16 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import { Redirect } from 'react-router-dom';
+import React, {useEffect} from 'react';
 import { handleAuthentication } from '../../config/auth0';
 
 const Callback = (props: any) => {
-  const [login, setLogin] = useState(false);
   useEffect(() => {
-    handleAuthentication(props.location.hash, props.history).then(res => {
-      setLogin(true);
-    });
-  }, []);
-  if(login)
-  return <Redirect to="/" />;
+    handleAuthentication(props.location.hash, props.history);
+  });
   return <h1>Logging in</h1>;
 };
 

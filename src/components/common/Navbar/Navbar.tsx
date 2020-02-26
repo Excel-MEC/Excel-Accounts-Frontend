@@ -15,13 +15,14 @@ const Navbar = () => (
       </button>
       <div className="collapse navbar-collapse justify-content-end">
         <ul className="navbar-nav">
-          <li className="nav-item">
-            <a className="nav-link" href="/">
-              <i className="material-icons">notifications</i>
-              <p className="d-lg-none d-md-block">
-                Notifications
-              </p>
+          <li className="nav-item dropdown">
+            <a className="nav-link" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown">
+              <i className="fa fa-user-circle"></i>
+                <p className="d-inline">Username</p>
             </a>
+            <div className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+            <a className="dropdown-item" href="/logout">Logout</a>
+            </div>
           </li>
         </ul>
       </div>
